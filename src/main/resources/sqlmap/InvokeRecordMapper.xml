@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neu.video_recognize.mapper.InvokeRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.neu.video_recognize.entity.po.InvokeRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="invoker_id" property="invokerId" jdbcType="INTEGER" />
+    <result column="is_api_invoke" property="isApiInvoke" jdbcType="BIT" />
+    <result column="invoke_time" property="invokeTime" jdbcType="TIMESTAMP" />
+    <result column="access_token" property="accessToken" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, invoker_id, is_api_invoke, invoke_time, access_token
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from invoke_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from invoke_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.neu.video_recognize.entity.po.InvokeRecord" >
+    insert into invoke_record (id, invoker_id, is_api_invoke, 
+      invoke_time, access_token)
+    values (#{id,jdbcType=INTEGER}, #{invokerId,jdbcType=INTEGER}, #{isApiInvoke,jdbcType=BIT}, 
+      #{invokeTime,jdbcType=TIMESTAMP}, #{accessToken,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.neu.video_recognize.entity.po.InvokeRecord" >
+    insert into invoke_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="invokerId != null" >
+        invoker_id,
+      </if>
+      <if test="isApiInvoke != null" >
+        is_api_invoke,
+      </if>
+      <if test="invokeTime != null" >
+        invoke_time,
+      </if>
+      <if test="accessToken != null" >
+        access_token,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="invokerId != null" >
+        #{invokerId,jdbcType=INTEGER},
+      </if>
+      <if test="isApiInvoke != null" >
+        #{isApiInvoke,jdbcType=BIT},
+      </if>
+      <if test="invokeTime != null" >
+        #{invokeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accessToken != null" >
+        #{accessToken,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.neu.video_recognize.entity.po.InvokeRecord" >
+    update invoke_record
+    <set >
+      <if test="invokerId != null" >
+        invoker_id = #{invokerId,jdbcType=INTEGER},
+      </if>
+      <if test="isApiInvoke != null" >
+        is_api_invoke = #{isApiInvoke,jdbcType=BIT},
+      </if>
+      <if test="invokeTime != null" >
+        invoke_time = #{invokeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="accessToken != null" >
+        access_token = #{accessToken,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.neu.video_recognize.entity.po.InvokeRecord" >
+    update invoke_record
+    set invoker_id = #{invokerId,jdbcType=INTEGER},
+      is_api_invoke = #{isApiInvoke,jdbcType=BIT},
+      invoke_time = #{invokeTime,jdbcType=TIMESTAMP},
+      access_token = #{accessToken,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

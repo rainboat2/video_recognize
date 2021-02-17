@@ -1,0 +1,30 @@
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 86400
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/video_recognize?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT
+    username: qyz
+    password: 20175377
+  mvc:
+    static-path-pattern: /res/**
+  web:
+    resources:
+      static-locations: file:${upload.image}, file:${upload.video}
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 110MB
+mybatis:
+  type-aliases-package: com.neu.vedio_recognize.entity.po
+  mapper-locations: classpath:sqlmap/*.xml
+  config-location: classpath:mybatis-config.xml
+logging:
+  level:
+    root: info
+upload:
+  video: /Users/rain/Movies/vedio_recognize/videos
+  image: /Users/rain/Movies/vedio_recognize/images

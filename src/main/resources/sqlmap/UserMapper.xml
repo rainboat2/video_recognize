@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neu.video_recognize.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.neu.video_recognize.entity.po.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="CHAR" />
+    <result column="image_path" property="imagePath" jdbcType="VARCHAR" />
+    <result column="secret_key" property="secretKey" jdbcType="VARCHAR" />
+    <result column="file_capacity" property="fileCapacity" jdbcType="BIGINT" />
+    <result column="own_file_size" property="ownFileSize" jdbcType="BIGINT" />
+    <result column="total_invoke_time" property="totalInvokeTime" jdbcType="INTEGER" />
+    <result column="invoke_time" property="invokeTime" jdbcType="INTEGER" />
+    <result column="invoke_last_update_time" property="invokeLastUpdateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, email, phone, password, image_path, secret_key, file_capacity, own_file_size, 
+    total_invoke_time, invoke_time, invoke_last_update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByEmail" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user
+    where email = #{email,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectBySecretKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user
+    where secret_key = #{secretKey,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.neu.video_recognize.entity.po.User" >
+    insert into user (id, name, email, 
+      phone, password, image_path, 
+      secret_key, file_capacity, own_file_size, 
+      total_invoke_time, invoke_time, invoke_last_update_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{password,jdbcType=CHAR}, #{imagePath,jdbcType=VARCHAR}, 
+      #{secretKey,jdbcType=VARCHAR}, #{fileCapacity,jdbcType=BIGINT}, #{ownFileSize,jdbcType=BIGINT}, 
+      #{totalInvokeTime,jdbcType=INTEGER}, #{invokeTime,jdbcType=INTEGER}, #{invokeLastUpdateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.neu.video_recognize.entity.po.User" >
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="imagePath != null" >
+        image_path,
+      </if>
+      <if test="secretKey != null" >
+        secret_key,
+      </if>
+      <if test="fileCapacity != null" >
+        file_capacity,
+      </if>
+      <if test="ownFileSize != null" >
+        own_file_size,
+      </if>
+      <if test="totalInvokeTime != null" >
+        total_invoke_time,
+      </if>
+      <if test="invokeTime != null" >
+        invoke_time,
+      </if>
+      <if test="invokeLastUpdateTime != null" >
+        invoke_last_update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=CHAR},
+      </if>
+      <if test="imagePath != null" >
+        #{imagePath,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKey != null" >
+        #{secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="fileCapacity != null" >
+        #{fileCapacity,jdbcType=BIGINT},
+      </if>
+      <if test="ownFileSize != null" >
+        #{ownFileSize,jdbcType=BIGINT},
+      </if>
+      <if test="totalInvokeTime != null" >
+        #{totalInvokeTime,jdbcType=INTEGER},
+      </if>
+      <if test="invokeTime != null" >
+        #{invokeTime,jdbcType=INTEGER},
+      </if>
+      <if test="invokeLastUpdateTime != null" >
+        #{invokeLastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.neu.video_recognize.entity.po.User" >
+    update user
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=CHAR},
+      </if>
+      <if test="imagePath != null" >
+        image_path = #{imagePath,jdbcType=VARCHAR},
+      </if>
+      <if test="secretKey != null" >
+        secret_key = #{secretKey,jdbcType=VARCHAR},
+      </if>
+      <if test="fileCapacity != null" >
+        file_capacity = #{fileCapacity,jdbcType=BIGINT},
+      </if>
+      <if test="ownFileSize != null" >
+        own_file_size = #{ownFileSize,jdbcType=BIGINT},
+      </if>
+      <if test="totalInvokeTime != null" >
+        total_invoke_time = #{totalInvokeTime,jdbcType=INTEGER},
+      </if>
+      <if test="invokeTime != null" >
+        invoke_time = #{invokeTime,jdbcType=INTEGER},
+      </if>
+      <if test="invokeLastUpdateTime != null" >
+        invoke_last_update_time = #{invokeLastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.neu.video_recognize.entity.po.User" >
+    update user
+    set name = #{name,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      password = #{password,jdbcType=CHAR},
+      image_path = #{imagePath,jdbcType=VARCHAR},
+      secret_key = #{secretKey,jdbcType=VARCHAR},
+      file_capacity = #{fileCapacity,jdbcType=BIGINT},
+      own_file_size = #{ownFileSize,jdbcType=BIGINT},
+      total_invoke_time = #{totalInvokeTime,jdbcType=INTEGER},
+      invoke_time = #{invokeTime,jdbcType=INTEGER},
+      invoke_last_update_time = #{invokeLastUpdateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
