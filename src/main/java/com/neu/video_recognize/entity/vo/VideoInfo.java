@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class VideoInfo {
 
     private MultipartFile video;
+    private MultipartFile poster;
     private Integer parentId;
     private Integer ownerId;
 
@@ -30,5 +31,13 @@ public class VideoInfo {
 
     public void setOwnerId(Integer ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public MultipartFile getPoster() {
+        return poster;
+    }
+
+    public void setPoster(MultipartFile poster) {
+        this.poster = poster;
     }
 }

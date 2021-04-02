@@ -31,10 +31,12 @@ public class FileServiceImpl implements FileService{
     @Override
     public File saveVideo(VideoInfo fi, User u) throws IOException {
         // 存储文件到磁盘
-        String filePathName = fileSaver.saveVideo(fi.getVideo());
+        String videoFilePathName = fileSaver.saveVideo(fi.getVideo());
+        String imageFilePathName = fileSaver.saveImage(fi.getPoster());
         // 保存相关记录到数据库
         File file = new File(fi);
-        file.setFilePath(filePathName);
+        file.setFilePath(videoFilePathName);
+        file.setCoverImagePath(imageFilePathName);
         fileMapper.insert(file);
 
         // 更新用户的存储空间使用量

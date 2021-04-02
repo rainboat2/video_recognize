@@ -39,6 +39,11 @@ public class DirectoryServiceImpl implements DirectoryService{
     }
 
     @Override
+    public List<Directory> getDirectories(Integer directoryId, Integer userId) {
+        return directoryMapper.selectByOwnerAndParent(new Directory(userId, directoryId));
+    }
+
+    @Override
     public int addDirectory(Directory d) {
         return directoryMapper.insert(d);
     }

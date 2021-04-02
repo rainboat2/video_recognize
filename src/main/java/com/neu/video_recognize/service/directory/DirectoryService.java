@@ -4,11 +4,14 @@ package com.neu.video_recognize.service.directory;
 import com.neu.video_recognize.entity.po.Directory;
 import com.neu.video_recognize.entity.po.User;
 
+import java.util.List;
 import java.util.Map;
 
 public interface DirectoryService {
 
     Map<String, Object> getFilesAndDirectoryBy(Integer directoryId, Integer userId);
+
+    List<Directory> getDirectories(Integer directoryId, Integer userId);
 
     int addDirectory(Directory d);
 
