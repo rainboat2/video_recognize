@@ -29,7 +29,10 @@ public class DirectoryServiceImpl implements DirectoryService{
 
     @Override
     public Map<String, Object> getFilesAndDirectoryBy(Integer directoryId, Integer userId) {
-        List<File> files = fileMapper.selectByOwnerAndParent(new File(userId, directoryId));
+        File info = new File();
+        info.setParentId(directoryId);
+        info.setOwnerId(userId);
+        List<File> files = fileMapper.selectByOwnerAndParent(info);
         List<Directory> directories = directoryMapper.selectByOwnerAndParent(new Directory(userId, directoryId));
 
         Map<String, Object> rs = new HashMap<>();
@@ -57,15 +60,15 @@ public class DirectoryServiceImpl implements DirectoryService{
     }
 
     @Override
-    public int deleteByPrimaryKey(Integer directoryId, User u) {
+    public int deleteByPrimaryKey(Integer directoryId, Integer userId) {
         // 获取文件夹
         Directory d = directoryMapper.selectByPrimaryKey(directoryId);
 
         // 构建查询数据时用的数据
         Directory dInfo = new Directory();
         File fInfo = new File();
-        dInfo.setOwnerId(u.getId());
-        fInfo.setOwnerId(u.getId());
+        dInfo.setOwnerId(userId);
+        fInfo.setOwnerId(userId);
 
         // 广度优先遍历，找到该文件夹下的所有文件和文件夹
         Queue<Directory> directoryQueue = new LinkedList<>();
@@ -101,12 +104,28 @@ public class DirectoryServiceImpl implements DirectoryService{
             directoryMapper.deleteByPrimaryKey(dir.getId());
 
         // 更新用户拥有的文件大小信息
-        u.setOwnFileSize(u.getOwnFileSize() - totalSize);
+        User u = userMapper.selectByPrimaryKey(userId);
         User updateInfo = new User();
         updateInfo.setId(u.getId());
-        updateInfo.setOwnFileSize(u.getOwnFileSize());
+        updateInfo.setOwnFileSize(u.getOwnFileSize() - totalSize);
         userMapper.updateByPrimaryKeySelective(updateInfo);
 
         return 1;
+    }
+
+    @Override
+    public int moveFile(Integer fileId, Integer newParentId, Boolean isDirectory) {
+        // 将文件或文件夹移动到新的文件夹下面
+        if (isDirectory){
+            Directory d = new Directory();
+            d.setId(fileId);
+            d.setParentId(newParentId);
+            return directoryMapper.updateByPrimaryKeySelective(d);
+        }else{
+            File f = new File();
+            f.setId(fileId);
+            f.setParentId(newParentId);
+            return fileMapper.updateByPrimaryKeySelective(f);
+        }
     }
 }

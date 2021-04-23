@@ -40,7 +40,7 @@ public class LoginFilter implements Filter {
         HttpSession session = ((HttpServletRequest) req).getSession(false);
         String requestUrl = ((HttpServletRequest) req).getServletPath();
 
-        if (isExcluded(requestUrl) || (session != null && session.getAttribute("user") != null)){
+        if (isExcluded(requestUrl) || (session != null && session.getAttribute("userId") != null)){
             chain.doFilter(req, resp);
         }else{
             ObjectMapper mapper =  new ObjectMapper();

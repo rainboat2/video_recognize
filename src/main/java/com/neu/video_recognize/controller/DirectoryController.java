@@ -25,20 +25,17 @@ public class DirectoryController {
 
     @RequestMapping("/getFilesAndDirectories")
     public Map<String, Object> getFilesAndDirectory(@RequestParam("parentId") Integer parentId, HttpSession session){
-        User u = (User) session.getAttribute("user");
-        Map<String, Object> rs = directoryService.getFilesAndDirectoryBy(parentId, u.getId());
-        // 文件更新后，用户信息中的ownFileSize可能会改变
-        u = userService.selectUserByPrimaryKey(u.getId());
-        session.setAttribute("user", u);
-        rs.put("user", u);
+        Integer uId = (Integer) session.getAttribute("userId");
+        Map<String, Object> rs = directoryService.getFilesAndDirectoryBy(parentId, uId);
+        rs.put("user", userService.selectUserByPrimaryKey(uId));
         rs.put("status", 1);
         return rs;
     }
 
     @RequestMapping("getDirectories")
     public Map<String, Object> getDirectories(@RequestParam("parentId") Integer parentId, HttpSession session){
-        User u = (User) session.getAttribute("user");
-        List<Directory> directories = directoryService.getDirectories(parentId, u.getId());
+        Integer uId = (Integer) session.getAttribute("userId");
+        List<Directory> directories = directoryService.getDirectories(parentId, uId);
         Map<String, Object> rs = new HashMap<>();
         rs.put("directories", directories);
         rs.put("status", 1);
@@ -47,8 +44,8 @@ public class DirectoryController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public Map<String, Object> addDirectory(HttpSession session, @RequestBody Directory directory){
-        User u = (User) session.getAttribute("user");
-        directory.setOwnerId(u.getId());
+        Integer uId = (Integer) session.getAttribute("userId");
+        directory.setOwnerId(uId);
         int status = directoryService.addDirectory(directory);
         return Collections.singletonMap("status", status);
     }
@@ -61,8 +58,16 @@ public class DirectoryController {
 
     @RequestMapping("/delete")
     public Map<String, Object> delete(@RequestParam("id") Integer directoryId, HttpSession session){
-        User u = (User) session.getAttribute("user");
-        int status = directoryService.deleteByPrimaryKey(directoryId, u);
+        Integer uId = (Integer) session.getAttribute("userId");
+        int status = directoryService.deleteByPrimaryKey(directoryId, uId);
+        return Collections.singletonMap("status", status);
+    }
+
+    @RequestMapping("/moveFile")
+    public Map<String, Object> moveFile(@RequestParam("fileId") Integer fileId,
+                                        @RequestParam("newParentId") Integer newParentId,
+                                        @RequestParam("isDirectory") Boolean isDirectory){
+        int status = directoryService.moveFile(fileId, newParentId, isDirectory);
         return Collections.singletonMap("status", status);
     }
 }

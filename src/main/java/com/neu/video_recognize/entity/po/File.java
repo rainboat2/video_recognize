@@ -26,12 +26,9 @@ public class File {
 
     private String recognizeResult;
 
-    public File(){}
+    private Date lastRecognizeTime;
 
-    public File(Integer ownerId, Integer parentId) {
-        this.ownerId = ownerId;
-        this.parentId = parentId;
-    }
+    public File(){}
 
     public File(VideoInfo fi){
         BeanUtils.copyProperties(fi, this);
@@ -120,5 +117,13 @@ public class File {
 
     public void setRecognizeResult(String recognizeResult) {
         this.recognizeResult = recognizeResult;
+    }
+
+    public Date getLastRecognizeTime() {
+        return lastRecognizeTime;
+    }
+
+    public void setLastRecognizeTime(Date lastRecognizeTime) {
+        this.lastRecognizeTime = lastRecognizeTime;
     }
 }

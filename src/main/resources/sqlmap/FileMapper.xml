@@ -12,10 +12,11 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
     <result column="recognize_result" property="recognizeResult" jdbcType="VARCHAR" />
+    <result column="last_recognize_time" property="lastRecognizeTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, name, owner_id, parent_id, size, cover_image_path, file_path, create_time, modify_time, 
-    recognize_result
+    recognize_result, last_recognize_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -34,15 +35,15 @@
     delete from file
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.neu.video_recognize.entity.po.File" >
-    insert into file (id, name, owner_id, 
+  <insert id="insert" parameterType="com.neu.video_recognize.entity.po.File" useGeneratedKeys="true" keyProperty="id">
+    insert into file (name, owner_id,
       parent_id, size, cover_image_path, 
       file_path, create_time, modify_time, 
-      recognize_result)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{ownerId,jdbcType=INTEGER}, 
+      recognize_result, last_recognize_time)
+    values (#{name,jdbcType=VARCHAR}, #{ownerId,jdbcType=INTEGER},
       #{parentId,jdbcType=INTEGER}, #{size,jdbcType=INTEGER}, #{coverImagePath,jdbcType=VARCHAR}, 
       #{filePath,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}, 
-      #{recognizeResult,jdbcType=VARCHAR})
+      #{recognizeResult,jdbcType=VARCHAR}, #{lastRecognizeTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.neu.video_recognize.entity.po.File" >
     insert into file
@@ -77,6 +78,9 @@
       <if test="recognizeResult != null" >
         recognize_result,
       </if>
+      <if test="lastRecognizeTime != null" >
+        last_recognize_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -108,6 +112,9 @@
       </if>
       <if test="recognizeResult != null" >
         #{recognizeResult,jdbcType=VARCHAR},
+      </if>
+      <if test="lastRecognizeTime != null" >
+        #{lastRecognizeTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -141,6 +148,9 @@
       <if test="recognizeResult != null" >
         recognize_result = #{recognizeResult,jdbcType=VARCHAR},
       </if>
+      <if test="lastRecognizeTime != null" >
+        last_recognize_time = #{lastRecognizeTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -154,7 +164,8 @@
       file_path = #{filePath,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       modify_time = #{modifyTime,jdbcType=TIMESTAMP},
-      recognize_result = #{recognizeResult,jdbcType=VARCHAR}
+      recognize_result = #{recognizeResult,jdbcType=VARCHAR},
+      last_recognize_time = #{lastRecognizeTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

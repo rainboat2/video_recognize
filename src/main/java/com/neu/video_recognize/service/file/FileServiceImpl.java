@@ -29,7 +29,7 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public File saveVideo(VideoInfo fi, User u) throws IOException {
+    public File saveVideo(VideoInfo fi, Integer uId) throws IOException {
         // 存储文件到磁盘
         String videoFilePathName = fileSaver.saveVideo(fi.getVideo());
         String imageFilePathName = fileSaver.saveImage(fi.getPoster());
@@ -40,9 +40,9 @@ public class FileServiceImpl implements FileService{
         fileMapper.insert(file);
 
         // 更新用户的存储空间使用量
-        u.setOwnFileSize(u.getOwnFileSize() + (int) fi.getVideo().getSize());
+        User u = userMapper.selectByPrimaryKey(uId);
         User updateInfo = new User();
-        updateInfo.setOwnFileSize(u.getOwnFileSize());
+        updateInfo.setOwnFileSize(u.getOwnFileSize() + fi.getVideo().getSize());
         updateInfo.setId(u.getId());
         userMapper.updateByPrimaryKeySelective(updateInfo);
 
@@ -58,14 +58,14 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public int deleteByPrimaryKey(Integer id, User u) {
+    public int deleteByPrimaryKey(Integer id, Integer uId) {
         File f = fileMapper.selectByPrimaryKey(id);
 
         // 更新用户拥有的文件大小数据
-        u.setOwnFileSize(u.getOwnFileSize() - f.getSize());
+        User u = userMapper.selectByPrimaryKey(uId);
         User newUser = new User();
         newUser.setId(u.getId());
-        newUser.setOwnFileSize(u.getOwnFileSize());
+        newUser.setOwnFileSize(u.getOwnFileSize() - f.getSize());
         userMapper.updateByPrimaryKeySelective(newUser);
 
         // 删除保存的文件

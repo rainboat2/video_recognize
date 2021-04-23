@@ -76,29 +76,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Map<String, Object> changeAvatar(MultipartFile avatar, User u) throws IOException {
+    public Map<String, Object> changeAvatar(MultipartFile avatar, Integer uId) throws IOException {
         Map<String, Object> rs = new HashMap<>();
 
         String fileName = fileSaver.saveImage(avatar);
         User user = new User();
-        user.setId(u.getId());
+        user.setId(uId);
         user.setImagePath(fileName);
         userMapper.updateByPrimaryKeySelective(user);
-        // 更新当前用户的信息
-        u.setImagePath(fileName);
 
         rs.put("state", 1);
         rs.put("msg", "修改头像成功");
-        rs.put("user", u);
+        rs.put("user", userMapper.selectByPrimaryKey(uId));
         return rs;
     }
 
     @Override
-    public Map<String, Object> updateUserInfo(User u, RegisterInformation newInfo) {
+    public Map<String, Object> updateUserInfo(Integer uId, RegisterInformation newInfo) {
         Map<String, Object> rs = new HashMap<>();
         // 构建一个user对象，用于选择性更新数据库中的用户数据
         User updateUser = new User();
-        updateUser.setId(u.getId());
+        updateUser.setId(uId);
         BeanUtils.copyProperties(newInfo, updateUser);
         if (updateUser.getPassword() != null)
             updateUser.setPassword(md5(updateUser.getPassword()));
@@ -107,19 +105,14 @@ public class UserServiceImpl implements UserService {
         // 更新用户信息
         userMapper.updateByPrimaryKeySelective(updateUser);
 
-        // 更新session中的用户信息
-        User newUser = userMapper.selectByPrimaryKey(u.getId());
-        BeanUtils.copyProperties(newUser, u);
-        u.setPassword(null);
-
         rs.put("status", 1);
         rs.put("msg", "修改用户信息成功");
-        rs.put("user", u);
+        rs.put("user", userMapper.selectByPrimaryKey(uId));
         return rs;
     }
 
     @Override
-    public void resetSecretKey(User u) {
+    public String resetSecretKey(Integer uId) {
         String sk;
         do {
             sk = Tools.randomString();
@@ -127,13 +120,13 @@ public class UserServiceImpl implements UserService {
 
         // 更新secretKey
         User user = new User();
-        user.setId(u.getId());
+        user.setId(uId);
         user.setSecretKey(sk);
         userMapper.updateByPrimaryKeySelective(user);
-        u.setSecretKey(sk);
 
         // 删除所有相关的token
-        tokenMapper.deleteByOwnerId(u.getId());
+        tokenMapper.deleteByOwnerId(uId);
+        return sk;
     }
 
     private String md5(String s){

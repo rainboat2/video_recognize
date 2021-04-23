@@ -15,9 +15,9 @@ public interface UserService {
 
     Map<String, Object> register(RegisterInformation registerInfo);
 
-    Map<String, Object> changeAvatar(MultipartFile avatar, User u) throws IOException;
+    Map<String, Object> changeAvatar(MultipartFile avatar, Integer uId) throws IOException;
 
-    Map<String, Object> updateUserInfo(User u, RegisterInformation newInfo);
+    Map<String, Object> updateUserInfo(Integer uId, RegisterInformation newInfo);
 
-    void resetSecretKey(User u);
+    String resetSecretKey(Integer uId);
 }

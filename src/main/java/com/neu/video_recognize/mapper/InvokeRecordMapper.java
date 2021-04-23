@@ -1,7 +1,9 @@
 package com.neu.video_recognize.mapper;
 
 import com.neu.video_recognize.entity.po.InvokeRecord;
+import org.springframework.stereotype.Component;
 
+@Component
 public interface InvokeRecordMapper {
     int deleteByPrimaryKey(Integer id);
 

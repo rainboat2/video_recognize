@@ -17,5 +17,7 @@ public interface DirectoryService {
 
     int rename(Integer directoryId, String name);
 
-    int deleteByPrimaryKey(Integer directoryId, User u);
+    int deleteByPrimaryKey(Integer directoryId, Integer userId);
+
+    int moveFile(Integer fileId, Integer newParentId, Boolean isDirectory);
 }

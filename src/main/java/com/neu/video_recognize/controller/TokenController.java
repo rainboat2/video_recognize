@@ -23,17 +23,17 @@ public class TokenController {
 
     @RequestMapping("/getAll")
     public Map<String, Object> getAll(HttpSession session){
-        User u = (User) session.getAttribute("user");
+        Integer uId = (Integer) session.getAttribute("userId");
         Map<String, Object> rs = new HashMap<>();
         rs.put("status", 1);
-        rs.put("tokens", tokenService.getToken(u.getId()));
+        rs.put("tokens", tokenService.getToken(uId));
         return rs;
     }
 
     @RequestMapping(value = "/addToken", method = RequestMethod.POST)
     public Map<String, Object> addToken(@RequestBody Token token, HttpSession session){
-        User u = (User) session.getAttribute("user");
-        tokenService.addToken(token, u);
+        Integer uId = (Integer) session.getAttribute("userId");
+        tokenService.addToken(token, uId);
         return Collections.singletonMap("status", 1);
     }
 }

@@ -32,9 +32,10 @@ public class UserController {
 
     @RequestMapping("/getCurrentUser")
     public Map<String, Object> getCurrentUser(HttpSession session){
-        Map<String, Object> rs = new HashMap<String, Object>();
+        Integer uId = (Integer) session.getAttribute("userId");
+        Map<String, Object> rs = new HashMap<>();
         rs.put("status", 1);
-        rs.put("user", session.getAttribute("user"));
+        rs.put("user", userService.selectUserByPrimaryKey(uId));
         return rs;
     }
 
@@ -42,7 +43,7 @@ public class UserController {
     public Map<String, Object> login(String email, String password, HttpSession session){
         Map<String, Object> rs = userService.login(email, password);
         if (rs.get("user") != null) {
-            session.setAttribute("user", rs.get("user"));
+            session.setAttribute("userId", ((User) rs.get("user")).getId());
         }else {
             session.invalidate();
         }
@@ -62,23 +63,23 @@ public class UserController {
 
     @RequestMapping("/changeAvatar")
     public Map<String, Object> changeAvatar(@RequestParam("avatar") MultipartFile avatar, HttpSession session) throws IOException {
-        User u = (User) session.getAttribute("user");
-        return userService.changeAvatar(avatar, u);
+        Integer uId = (Integer) session.getAttribute("userId");
+        return userService.changeAvatar(avatar, uId);
     }
 
     @RequestMapping(value = "/updateInfo", method = RequestMethod.POST)
     public Map<String, Object> updateUserInfo(@RequestBody RegisterInformation registerInfo, HttpSession session){
-        User u = (User) session.getAttribute("user");
-        return userService.updateUserInfo(u, registerInfo);
+        Integer uId = (Integer) session.getAttribute("userId");
+        return userService.updateUserInfo(uId, registerInfo);
     }
 
     @RequestMapping("/resetSecretKey")
     public Map<String, Object> reset(HttpSession session){
-        User u = (User) session.getAttribute("user");
-        userService.resetSecretKey(u);
+        Integer uId = (Integer) session.getAttribute("userId");
+        String sk = userService.resetSecretKey(uId);
         Map<String, Object> rs = new HashMap<>();
         rs.put("status", 1);
-        rs.put("secretKey", u.getSecretKey());
+        rs.put("secretKey", sk);
         return rs;
     }
 

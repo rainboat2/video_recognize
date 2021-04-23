@@ -31,10 +31,10 @@ public class FileController {
     @RequestMapping("/uploadVideo")
     public Map<String, Object> upload(VideoInfo fi, HttpSession session) throws IOException {
         // 设置文件的所有者
-        User u = (User) session.getAttribute("user");
-        fi.setOwnerId(u.getId());
+        Integer uId = (Integer) session.getAttribute("userId");
+        fi.setOwnerId(uId);
         // 存储视频
-        File f = fileService.saveVideo(fi, u);
+        File f = fileService.saveVideo(fi, uId);
         Map<String, Object> rs = new HashMap<>(5);
         rs.put("file", f);
         rs.put("status", 1);
@@ -49,8 +49,8 @@ public class FileController {
 
     @RequestMapping("/delete")
     public Map<String, Object> delete(@RequestParam("id") Integer fileId, HttpSession session){
-        User u = (User) session.getAttribute("user");
-        int status = fileService.deleteByPrimaryKey(fileId, u);
+        Integer uId = (Integer) session.getAttribute("userId");
+        int status = fileService.deleteByPrimaryKey(fileId, uId);
         return Collections.singletonMap("status", status);
     }
 }

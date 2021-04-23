@@ -19,5 +19,5 @@ public interface FileMapper {
 
     int updateByPrimaryKey(File record);
 
-    List<File> selectByOwnerAndParent(File info);
+    List<File> selectByOwnerAndParent(File record);
 }

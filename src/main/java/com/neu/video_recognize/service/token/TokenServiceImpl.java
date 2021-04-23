@@ -3,6 +3,7 @@ package com.neu.video_recognize.service.token;
 import com.neu.video_recognize.entity.po.Token;
 import com.neu.video_recognize.entity.po.User;
 import com.neu.video_recognize.mapper.TokenMapper;
+import com.neu.video_recognize.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,15 +22,20 @@ public class TokenServiceImpl implements TokenService{
     @Autowired
     private TokenMapper tokenMapper;
 
+    @Autowired
+    private UserMapper userMapper;
+
     @Override
     public List<Token> getToken(Integer uid) {
         return tokenMapper.selectByOwnId(uid);
     }
 
     @Override
-    public boolean addToken(Token token, User u) {
+    public boolean addToken(Token token, Integer uId) {
         long validTime = token.getExpireTime().getTime() - System.currentTimeMillis();
         token.setCreateTime(new Date(System.currentTimeMillis()));
+
+        User u = userMapper.selectByPrimaryKey(uId);
         token.setContent(token(u.getSecretKey(), u.getId(), validTime));
         token.setOwnerId(u.getId());
         tokenMapper.insert(token);

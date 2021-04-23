@@ -9,5 +9,5 @@ public interface TokenService {
 
     List<Token> getToken(Integer uid);
 
-    boolean addToken(Token token, User u);
+    boolean addToken(Token token, Integer uId);
 }
