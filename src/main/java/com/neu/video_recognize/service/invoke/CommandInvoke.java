@@ -2,8 +2,10 @@ package com.neu.video_recognize.service.invoke;
 
 import com.neu.video_recognize.entity.po.File;
 import com.neu.video_recognize.entity.po.InvokeRecord;
+import com.neu.video_recognize.entity.po.User;
 import com.neu.video_recognize.mapper.FileMapper;
 import com.neu.video_recognize.mapper.InvokeRecordMapper;
+import com.neu.video_recognize.mapper.UserMapper;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
@@ -33,6 +35,24 @@ public class CommandInvoke implements InvokeService{
 
     @Autowired
     private InvokeRecordMapper invokeRecordMapper;
+
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Override
+    public boolean requestInvokePermission(Integer uId) {
+        User u = userMapper.selectByPrimaryKey(uId);
+        if (u.getInvokeTime() >= u.getTotalInvokeTime()){
+            return false;
+        }else{
+            // 将用户调用次数加一
+            User updateInfo = new User();
+            updateInfo.setId(uId);
+            updateInfo.setInvokeTime(u.getInvokeTime() + 1);
+            return true;
+        }
+    }
 
     @Override
     @Async

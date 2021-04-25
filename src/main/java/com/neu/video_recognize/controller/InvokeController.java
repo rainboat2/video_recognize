@@ -1,6 +1,5 @@
 package com.neu.video_recognize.controller;
 
-import com.neu.video_recognize.entity.po.User;
 import com.neu.video_recognize.service.invoke.InvokeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -22,9 +21,15 @@ public class InvokeController {
     @RequestMapping("/recognize")
     public Map<String, Object> recognize(@RequestParam("fileId") Integer fileId, HttpSession session) throws IOException {
         Integer uId = (Integer) session.getAttribute("userId");
-
-        invokeService.invokeAlgorithm(fileId);
-        invokeService.insertRecord(uId, null);
-        return Collections.singletonMap("status", 1);
+        Map<String, Object> rs = new HashMap<>(5);
+        if (invokeService.requestInvokePermission(uId)){
+            invokeService.invokeAlgorithm(fileId);
+            int flag = invokeService.insertRecord(uId, null);
+            rs.put("status", flag);
+        }else{
+            rs.put("status", 0);
+            rs.put("msg", "调用次数已经耗尽");
+        }
+        return rs;
     }
 }

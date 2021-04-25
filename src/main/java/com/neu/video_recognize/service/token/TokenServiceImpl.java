@@ -56,17 +56,15 @@ public class TokenServiceImpl implements TokenService{
 
 
     private String token(String secretKey, Integer userId, long validTime){
-        String token = "";
         Date date = new Date(System.currentTimeMillis() + validTime);
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         Map<String,Object> header = new HashMap<>();
         header.put("typ", "JWT");
         header.put("alg", "HS256");
-        token = JWT.create()
+        return JWT.create()
                 .withHeader(header)
                 .withClaim("userId", userId)
                 .withExpiresAt(date)
                 .sign(algorithm);
-        return token;
     }
 }
