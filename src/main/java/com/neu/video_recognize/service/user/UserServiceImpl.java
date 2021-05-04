@@ -13,6 +13,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -127,6 +128,29 @@ public class UserServiceImpl implements UserService {
         // 删除所有相关的token
         tokenMapper.deleteByOwnerId(uId);
         return sk;
+    }
+
+    @Override
+    public User tryToResetInvokeTime(User u) {
+        // 每月一次，重置用户的调用次数
+        Date lastUpdateTime = u.getInvokeLastUpdateTime();
+        Calendar c = Calendar.getInstance();
+
+        c.setTimeInMillis(lastUpdateTime.getTime());
+        int lastResetMonth = c.get(Calendar.MONTH);
+        c.setTimeInMillis(System.currentTimeMillis());
+        int currentMonth = c.get(Calendar.MONTH);
+
+        if (lastResetMonth != currentMonth){
+            User updateInfo = new User();
+            updateInfo.setId(u.getId());
+            updateInfo.setInvokeTime(0);
+            updateInfo.setInvokeLastUpdateTime(new Date(System.currentTimeMillis()));
+            userMapper.updateByPrimaryKeySelective(updateInfo);
+            u.setInvokeLastUpdateTime(new Date(System.currentTimeMillis()));
+        }
+
+        return u;
     }
 
     private String md5(String s){

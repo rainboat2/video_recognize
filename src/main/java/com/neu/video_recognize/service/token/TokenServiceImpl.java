@@ -1,5 +1,6 @@
 package com.neu.video_recognize.service.token;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.neu.video_recognize.entity.po.Token;
 import com.neu.video_recognize.entity.po.User;
 import com.neu.video_recognize.mapper.TokenMapper;
@@ -42,7 +43,7 @@ public class TokenServiceImpl implements TokenService{
         return true;
     }
 
-    private boolean verify(String token, String secretKey){
+    public boolean verify(String token, String secretKey){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secretKey);
             JWTVerifier verifier = JWT.require(algorithm).build();
@@ -52,6 +53,17 @@ public class TokenServiceImpl implements TokenService{
             return  false;
         }
         return true;
+    }
+
+    @Override
+    public Integer getClaimedUserId(String token) {
+        DecodedJWT jwt;
+        try {
+            jwt = JWT.decode(token);
+        }catch (Exception e){
+            return null;
+        }
+        return jwt.getClaim("userId").asInt();
     }
 
 

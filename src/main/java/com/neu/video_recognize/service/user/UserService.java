@@ -20,4 +20,6 @@ public interface UserService {
     Map<String, Object> updateUserInfo(Integer uId, RegisterInformation newInfo);
 
     String resetSecretKey(Integer uId);
+
+    User tryToResetInvokeTime(User u);
 }

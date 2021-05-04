@@ -10,7 +10,7 @@ public interface FileService {
 
     File getFileByPrimaryKey(Integer id);
 
-    File saveVideo(VideoInfo fi, Integer uId) throws IOException;
+    File saveVideo(VideoInfo fi) throws IOException;
 
     int rename(Integer fileId, String name);
 

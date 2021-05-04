@@ -114,18 +114,37 @@ public class DirectoryServiceImpl implements DirectoryService{
     }
 
     @Override
-    public int moveFile(Integer fileId, Integer newParentId, Boolean isDirectory) {
+    public int moveFile(Integer fileId, Integer newParentId, Boolean isDirectory, Map<String, Object> rs) {
         // 将文件或文件夹移动到新的文件夹下面
         if (isDirectory){
-            Directory d = new Directory();
-            d.setId(fileId);
-            d.setParentId(newParentId);
-            return directoryMapper.updateByPrimaryKeySelective(d);
+            if (hasCycle(fileId, newParentId)){
+                rs.put("msg", "文件不能移动到其自身或其子目录下");
+                return 0;
+            }else{
+                Directory d = new Directory();
+                d.setId(fileId);
+                d.setParentId(newParentId);
+                return directoryMapper.updateByPrimaryKeySelective(d);
+            }
         }else{
             File f = new File();
             f.setId(fileId);
             f.setParentId(newParentId);
             return fileMapper.updateByPrimaryKeySelective(f);
         }
+    }
+
+    private boolean hasCycle(Integer directoryId, Integer newParentId){
+        // 要想不成环，就要求newParentId不是directoryId本身或是其子目录
+        Integer cur = newParentId;
+        boolean flag = false;
+        while (cur != -1){
+            if (cur.equals(directoryId)){
+                flag = true;
+                break;
+            }
+            cur = fileMapper.selectByPrimaryKey(cur).getParentId();
+        }
+        return flag;
     }
 }

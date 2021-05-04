@@ -9,6 +9,15 @@ public class VideoInfo {
     private Integer parentId;
     private Integer ownerId;
 
+    public VideoInfo(){}
+
+    public VideoInfo(MultipartFile video, MultipartFile poster, Integer parentId, Integer ownerId) {
+        this.video = video;
+        this.poster = poster;
+        this.parentId = parentId;
+        this.ownerId = ownerId;
+    }
+
     public MultipartFile getVideo() {
         return video;
     }

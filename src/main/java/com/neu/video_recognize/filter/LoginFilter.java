@@ -18,7 +18,8 @@ public class LoginFilter implements Filter {
     private static final Pattern[] patterns = {
             Pattern.compile("/res/*"),
             Pattern.compile("/user/login"),
-            Pattern.compile("/user/register")
+            Pattern.compile("/user/register"),
+            Pattern.compile("/invoke/token/*")
     };
 
     private boolean isExcluded(String url){

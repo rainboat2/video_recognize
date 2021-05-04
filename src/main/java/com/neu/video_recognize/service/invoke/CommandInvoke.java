@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Date;
+import java.util.List;
 
 @Service
 public class CommandInvoke implements InvokeService{
@@ -95,5 +96,10 @@ public class CommandInvoke implements InvokeService{
         record.setIsApiInvoke(token != null);
         record.setInvokeTime(new Date(System.currentTimeMillis()));
         return invokeRecordMapper.insert(record);
+    }
+
+    @Override
+    public List<InvokeRecord> getInvokeRecordsBy(Integer uId) {
+        return invokeRecordMapper.selectByUserId(uId);
     }
 }

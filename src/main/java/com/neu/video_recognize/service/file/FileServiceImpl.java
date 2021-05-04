@@ -29,10 +29,14 @@ public class FileServiceImpl implements FileService{
     }
 
     @Override
-    public File saveVideo(VideoInfo fi, Integer uId) throws IOException {
+    public File saveVideo(VideoInfo fi) throws IOException {
         // 存储文件到磁盘
         String videoFilePathName = fileSaver.saveVideo(fi.getVideo());
-        String imageFilePathName = fileSaver.saveImage(fi.getPoster());
+
+        String imageFilePathName = "default.png";
+        if (fi.getPoster() != null)
+            imageFilePathName = fileSaver.saveImage(fi.getPoster());
+
         // 保存相关记录到数据库
         File file = new File(fi);
         file.setFilePath(videoFilePathName);
@@ -40,7 +44,7 @@ public class FileServiceImpl implements FileService{
         fileMapper.insert(file);
 
         // 更新用户的存储空间使用量
-        User u = userMapper.selectByPrimaryKey(uId);
+        User u = userMapper.selectByPrimaryKey(fi.getOwnerId());
         User updateInfo = new User();
         updateInfo.setOwnFileSize(u.getOwnFileSize() + fi.getVideo().getSize());
         updateInfo.setId(u.getId());

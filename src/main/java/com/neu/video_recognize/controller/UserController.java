@@ -34,8 +34,9 @@ public class UserController {
     public Map<String, Object> getCurrentUser(HttpSession session){
         Integer uId = (Integer) session.getAttribute("userId");
         Map<String, Object> rs = new HashMap<>();
+        User u = userService.selectUserByPrimaryKey(uId);
         rs.put("status", 1);
-        rs.put("user", userService.selectUserByPrimaryKey(uId));
+        rs.put("user", userService.tryToResetInvokeTime(u));
         return rs;
     }
 

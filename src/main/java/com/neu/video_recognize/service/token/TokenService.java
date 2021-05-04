@@ -10,4 +10,9 @@ public interface TokenService {
     List<Token> getToken(Integer uid);
 
     boolean addToken(Token token, Integer uId);
+
+    boolean verify(String token, String secretKey);
+
+    Integer getClaimedUserId(String token);
+
 }

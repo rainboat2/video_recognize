@@ -13,11 +13,11 @@ spring:
     static-path-pattern: /res/**
   web:
     resources:
-      static-locations: file:${upload.image}, file:${upload.video}
+      static-locations: file:${upload.image}, file:${upload.video}, file:${upload.files}
   servlet:
     multipart:
-      max-file-size: 100MB
-      max-request-size: 110MB
+      max-file-size: 500MB
+      max-request-size: 510MB
 mybatis:
   type-aliases-package: com.neu.vedio_recognize.entity.po
   mapper-locations: classpath:sqlmap/*.xml
@@ -28,5 +28,6 @@ logging:
 upload:
   video: /Users/rain/Movies/vedio_recognize/videos
   image: /Users/rain/Movies/vedio_recognize/images
+  files: /Users/rain/Movies/vedio_recognize/files
 python-path: /opt/anaconda3/bin/python
 script-path: /Users/rain/IdeaProjects/video_recognize/src/main/resources/static/Test.py

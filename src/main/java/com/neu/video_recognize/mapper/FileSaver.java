@@ -1,5 +1,6 @@
 package com.neu.video_recognize.mapper;
 
+import com.sun.istack.internal.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,14 +19,14 @@ public class FileSaver {
     private String imagePath;
 
     public String saveVideo(MultipartFile video) throws IOException {
-        String saveFileName = UUID.randomUUID().toString().replaceAll("-", "") + video.getOriginalFilename();
+        String saveFileName = UUID.randomUUID().toString().replaceAll("-", "") + getFileType(video.getOriginalFilename());
         File f = new File(videoPath + "/" + saveFileName);
         video.transferTo(new File(f.getAbsolutePath()));
         return saveFileName;
     }
 
     public String  saveImage(MultipartFile image) throws IOException{
-        String saveFileName = UUID.randomUUID().toString().replaceAll("-", "") + image.getOriginalFilename();
+        String saveFileName = UUID.randomUUID().toString().replaceAll("-", "") + getFileType(image.getOriginalFilename());
         File f = new File(imagePath + "/" + saveFileName);
         image.transferTo(new File(f.getAbsolutePath()));
         return saveFileName;
@@ -45,5 +46,16 @@ public class FileSaver {
     private boolean delete(String path){
         File f = new File(path);
         return f.delete();
+    }
+
+    @NotNull
+    private String getFileType(String name){
+        if (name == null)
+            return "";
+        int lastPoint = name.lastIndexOf('.');
+        if (lastPoint == -1 || lastPoint == 0)
+            return "";
+        else
+            return name.substring(lastPoint);
     }
 }

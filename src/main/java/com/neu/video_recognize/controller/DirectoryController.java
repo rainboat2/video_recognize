@@ -67,7 +67,9 @@ public class DirectoryController {
     public Map<String, Object> moveFile(@RequestParam("fileId") Integer fileId,
                                         @RequestParam("newParentId") Integer newParentId,
                                         @RequestParam("isDirectory") Boolean isDirectory){
-        int status = directoryService.moveFile(fileId, newParentId, isDirectory);
-        return Collections.singletonMap("status", status);
+        Map<String, Object> rs = new HashMap<>();
+        int status = directoryService.moveFile(fileId, newParentId, isDirectory, rs);
+        rs.put("status", status);
+        return rs;
     }
 }

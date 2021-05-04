@@ -1,11 +1,9 @@
 package com.neu.video_recognize.controller;
 
 import com.neu.video_recognize.entity.po.File;
-import com.neu.video_recognize.entity.po.User;
 import com.neu.video_recognize.entity.vo.VideoInfo;
 import com.neu.video_recognize.service.file.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +32,7 @@ public class FileController {
         Integer uId = (Integer) session.getAttribute("userId");
         fi.setOwnerId(uId);
         // 存储视频
-        File f = fileService.saveVideo(fi, uId);
+        File f = fileService.saveVideo(fi);
         Map<String, Object> rs = new HashMap<>(5);
         rs.put("file", f);
         rs.put("status", 1);

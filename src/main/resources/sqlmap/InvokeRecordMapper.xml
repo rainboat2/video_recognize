@@ -17,6 +17,12 @@
     from invoke_record
     where id = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from invoke_record
+    where invoker_id = #{uId,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from invoke_record
     where id = #{id,jdbcType=INTEGER}

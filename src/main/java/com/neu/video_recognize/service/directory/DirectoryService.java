@@ -19,5 +19,5 @@ public interface DirectoryService {
 
     int deleteByPrimaryKey(Integer directoryId, Integer userId);
 
-    int moveFile(Integer fileId, Integer newParentId, Boolean isDirectory);
+    int moveFile(Integer fileId, Integer newParentId, Boolean isDirectory, Map<String, Object> rs);
 }
