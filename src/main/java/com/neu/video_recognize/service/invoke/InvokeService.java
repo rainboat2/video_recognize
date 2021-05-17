@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface InvokeService {
 
-    boolean requestInvokePermission(Integer uId);
+    boolean requestInvokePermission(Integer uId, int times);
 
     void invokeAlgorithm(Integer FileId) throws IOException;
 

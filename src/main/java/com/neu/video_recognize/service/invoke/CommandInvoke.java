@@ -42,17 +42,23 @@ public class CommandInvoke implements InvokeService{
     private UserMapper userMapper;
 
     @Override
-    public boolean requestInvokePermission(Integer uId) {
+    public boolean requestInvokePermission(Integer uId, int times) {
         User u = userMapper.selectByPrimaryKey(uId);
-        if (u.getInvokeTime() >= u.getTotalInvokeTime()){
+        if (u.getInvokeTime() + times > u.getTotalInvokeTime()){
             return false;
         }else{
-            // 将用户调用次数加一
+            // 将用户调用次数加上times次
             User updateInfo = new User();
             updateInfo.setId(uId);
-            updateInfo.setInvokeTime(u.getInvokeTime() + 1);
+            updateInfo.setInvokeTime(u.getInvokeTime() + times);
             return true;
         }
+    }
+
+    private boolean isRecognizing(File f){
+        long gap = System.currentTimeMillis() - f.getLastRecognizeTime().getTime();
+        // 上次开始识别时间在10分钟内，且识别结果为空，说明正在识别中
+        return gap < 600000 && f.getRecognizeResult().equals("");
     }
 
     @Override
@@ -60,6 +66,8 @@ public class CommandInvoke implements InvokeService{
     public void invokeAlgorithm(Integer fileId) throws IOException {
         // 获取file对象，找到视频存储的绝对路径
         File f = fileMapper.selectByPrimaryKey(fileId);
+        if (isRecognizing(f))
+            return;
         String absolutePath = videoPath + "/" + f.getFilePath();
 
         // 更新file对象的recognize_time，重置识别结果

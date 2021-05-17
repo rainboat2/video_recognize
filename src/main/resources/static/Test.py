@@ -1,13 +1,7 @@
 import sys
+import time
 
 video_path = sys.argv[1]
-cnt = 1
-rs = 0
-while cnt < 29475644:
-    cnt += 1
-    if cnt % 1234 == 0:
-        rs += cnt
-    else:
-        rs -= cnt
+time.sleep(1)
 
-print("风景，动画")
+print('{"action":"crossing","position":"Back-left"}')

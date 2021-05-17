@@ -1,18 +1,18 @@
 package com.neu.video_recognize.controller;
 
 import com.neu.video_recognize.entity.po.File;
+import com.neu.video_recognize.entity.vo.FileIdList;
 import com.neu.video_recognize.entity.vo.VideoInfo;
 import com.neu.video_recognize.service.file.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/file")
@@ -24,6 +24,14 @@ public class FileController {
     @RequestMapping("/getById")
     public Map<String, Object> getById(@RequestParam("id") Integer id){
         return Collections.singletonMap("file", fileService.getFileByPrimaryKey(id));
+    }
+
+    @RequestMapping("/getAllFilesById")
+    public Map<String, Object> getAllFilesById(@RequestBody FileIdList fileIdList){
+        Map<String, Object> rs = new HashMap<>();
+        rs.put("status", 1);
+        rs.put("files", fileService.getAllFilesById(fileIdList.getIdList()));
+        return rs;
     }
 
     @RequestMapping("/uploadVideo")

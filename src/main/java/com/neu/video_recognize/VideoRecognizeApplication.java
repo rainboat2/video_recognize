@@ -14,5 +14,4 @@ public class VideoRecognizeApplication {
         SpringApplication.run(VideoRecognizeApplication.class, args);
     }
 
-
 }

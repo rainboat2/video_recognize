@@ -21,11 +21,11 @@ public class AsyncConfigurator implements AsyncConfigurer {
     @Bean
     public Executor getAsyncExecutor(){
         ThreadPoolTaskExecutor threadPool = new ThreadPoolTaskExecutor();
-        threadPool.setCorePoolSize(5);
-        threadPool.setMaxPoolSize(20);
-        threadPool.setQueueCapacity(10);
+        threadPool.setCorePoolSize(2);
+        threadPool.setMaxPoolSize(5);
+        threadPool.setQueueCapacity(100);
         threadPool.setWaitForTasksToCompleteOnShutdown(true);
-        threadPool.setAwaitTerminationMillis(60);
+        threadPool.setAwaitTerminationMillis(6000);
         threadPool.setThreadNamePrefix("video-recognize-async-");
         threadPool.initialize();
         return threadPool;

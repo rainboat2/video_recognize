@@ -8,10 +8,7 @@ import com.neu.video_recognize.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

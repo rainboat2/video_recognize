@@ -138,10 +138,12 @@ public class UserServiceImpl implements UserService {
 
         c.setTimeInMillis(lastUpdateTime.getTime());
         int lastResetMonth = c.get(Calendar.MONTH);
+        int lastResetYear = c.get(Calendar.YEAR);
         c.setTimeInMillis(System.currentTimeMillis());
         int currentMonth = c.get(Calendar.MONTH);
+        int currentYear = c.get(Calendar.YEAR);
 
-        if (lastResetMonth != currentMonth){
+        if (lastResetMonth != currentMonth || lastResetYear != currentYear){
             User updateInfo = new User();
             updateInfo.setId(u.getId());
             updateInfo.setInvokeTime(0);

@@ -1,6 +1,5 @@
 package com.neu.video_recognize.mapper;
 
-import com.sun.istack.internal.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,7 +47,6 @@ public class FileSaver {
         return f.delete();
     }
 
-    @NotNull
     private String getFileType(String name){
         if (name == null)
             return "";

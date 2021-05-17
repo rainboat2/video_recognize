@@ -1,8 +1,8 @@
 package com.neu.video_recognize.controller;
 
 import com.neu.video_recognize.entity.po.File;
-import com.neu.video_recognize.entity.po.Token;
 import com.neu.video_recognize.entity.po.User;
+import com.neu.video_recognize.entity.vo.FileIdList;
 import com.neu.video_recognize.entity.vo.RecognizeInfo;
 import com.neu.video_recognize.entity.vo.VideoInfo;
 import com.neu.video_recognize.service.file.FileService;
@@ -10,15 +10,16 @@ import com.neu.video_recognize.service.invoke.InvokeService;
 import com.neu.video_recognize.service.token.TokenService;
 import com.neu.video_recognize.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
-import java.awt.*;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -41,13 +42,32 @@ public class InvokeController {
     public Map<String, Object> recognize(@RequestParam("fileId") Integer fileId, HttpSession session) throws IOException {
         Integer uId = (Integer) session.getAttribute("userId");
         Map<String, Object> rs = new HashMap<>(5);
-        if (invokeService.requestInvokePermission(uId)){
+        if (invokeService.requestInvokePermission(uId, 1)){
             invokeService.invokeAlgorithm(fileId);
             int flag = invokeService.insertRecord(uId, null);
             rs.put("status", flag);
         }else{
             rs.put("status", 0);
             rs.put("msg", "调用次数已经耗尽");
+        }
+        return rs;
+    }
+
+    @RequestMapping("/recognizeAll")
+    public Map<String, Object> recognizeAll(@RequestBody FileIdList fileIdList, HttpSession session) throws IOException {
+        Integer uId = (Integer) session.getAttribute("userId");
+        List<Integer> ids = fileIdList.getIdList();
+        Map<String, Object> rs = new HashMap<>(5);
+        if (invokeService.requestInvokePermission(uId, ids.size())){
+            for (Integer fileId : ids){
+                invokeService.invokeAlgorithm(fileId);
+                invokeService.insertRecord(uId, null);
+            }
+            rs.put("status", 1);
+            rs.put("fileIds", ids);
+        }else{
+            rs.put("status", 0);
+            rs.put("msg", "调用次数不足！");
         }
         return rs;
     }
@@ -61,7 +81,7 @@ public class InvokeController {
             return rs;
         }
 
-        if (!invokeService.requestInvokePermission(u.getId())){
+        if (!invokeService.requestInvokePermission(u.getId(), 1)){
             rs.put("msg", "调用次数已经耗尽");
             return rs;
         }

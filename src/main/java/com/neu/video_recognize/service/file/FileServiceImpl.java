@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class FileServiceImpl implements FileService{
@@ -41,6 +44,8 @@ public class FileServiceImpl implements FileService{
         File file = new File(fi);
         file.setFilePath(videoFilePathName);
         file.setCoverImagePath(imageFilePathName);
+        file.setLastRecognizeTime(new Date(System.currentTimeMillis() - 86400000));
+        file.setRecognizeResult("");
         fileMapper.insert(file);
 
         // 更新用户的存储空间使用量
@@ -79,6 +84,15 @@ public class FileServiceImpl implements FileService{
         // 删除数据库记录
         fileMapper.deleteByPrimaryKey(id);
         return 1;
+    }
+
+    @Override
+    public List<File> getAllFilesById(List<Integer> ids) {
+        List<File> files = new ArrayList<>(ids.size());
+        for (Integer id : ids){
+            files.add(fileMapper.selectByPrimaryKey(id));
+        }
+        return files;
     }
 
 }
