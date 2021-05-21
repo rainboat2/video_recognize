@@ -20,4 +20,6 @@ public interface FileMapper {
     int updateByPrimaryKey(File record);
 
     List<File> selectByOwnerAndParent(File record);
+
+    List<File> selectByParentId(Integer parentId);
 }

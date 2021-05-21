@@ -37,7 +37,6 @@ public class CommandInvoke implements InvokeService{
     @Autowired
     private InvokeRecordMapper invokeRecordMapper;
 
-
     @Autowired
     private UserMapper userMapper;
 
@@ -55,7 +54,7 @@ public class CommandInvoke implements InvokeService{
         }
     }
 
-    private boolean isRecognizing(File f){
+    public boolean isRecognizing(File f){
         long gap = System.currentTimeMillis() - f.getLastRecognizeTime().getTime();
         // 上次开始识别时间在10分钟内，且识别结果为空，说明正在识别中
         return gap < 600000 && f.getRecognizeResult().equals("");
@@ -63,19 +62,12 @@ public class CommandInvoke implements InvokeService{
 
     @Override
     @Async
-    public void invokeAlgorithm(Integer fileId) throws IOException {
+    public void invokeAlgorithm(File f) throws IOException {
         // 获取file对象，找到视频存储的绝对路径
-        File f = fileMapper.selectByPrimaryKey(fileId);
-        if (isRecognizing(f))
-            return;
         String absolutePath = videoPath + "/" + f.getFilePath();
 
         // 更新file对象的recognize_time，重置识别结果
-        File updateInfo = new File();
-        updateInfo.setId(fileId);
-        updateInfo.setRecognizeResult("");
-        updateInfo.setLastRecognizeTime(new Date(System.currentTimeMillis()));
-        fileMapper.updateByPrimaryKeySelective(updateInfo);
+       resetResultAndRecognizeTime(f);
 
         // 开始识别
         CommandLine cmdLine = new CommandLine(pythonPath);
@@ -88,11 +80,33 @@ public class CommandInvoke implements InvokeService{
         executor.setStreamHandler(streamHandler);
         executor.execute(cmdLine);
 
-        String rs = outputStream.toString();
+        String rs = extractResult(outputStream.toString());
         // 将识别结果保存到数据库
-        updateInfo = new File();
-        updateInfo.setId(fileId);
+        File updateInfo = new File();
+        updateInfo.setId(f.getId());
         updateInfo.setRecognizeResult(rs);
+        fileMapper.updateByPrimaryKeySelective(updateInfo);
+    }
+
+    private String extractResult(String output){
+        String[] lines = output.split("\n");
+        String rs = "";
+        for (String line : lines){
+            if (line.startsWith("rs:")){
+                rs = line.substring(3);
+                break;
+            }
+        }
+        return rs;
+    }
+
+    public void resetResultAndRecognizeTime(File f){
+        if (f.getRecognizeResult() != null && f.getRecognizeResult().equals(""))
+            return;
+        File updateInfo = new File();
+        updateInfo.setId(f.getId());
+        updateInfo.setRecognizeResult("");
+        updateInfo.setLastRecognizeTime(new Date(System.currentTimeMillis()));
         fileMapper.updateByPrimaryKeySelective(updateInfo);
     }
 
@@ -109,5 +123,19 @@ public class CommandInvoke implements InvokeService{
     @Override
     public List<InvokeRecord> getInvokeRecordsBy(Integer uId) {
         return invokeRecordMapper.selectByUserId(uId);
+    }
+
+    @Override
+    public void invokeAll(List<Integer> fileIds, List<String> failed, List<String> succeed) throws IOException {
+        for (Integer id : fileIds){
+            File f = fileMapper.selectByPrimaryKey(id);
+            if (isRecognizing(f)){
+                failed.add(f.getName());
+            }else{
+                succeed.add(f.getName());
+                resetResultAndRecognizeTime(f);
+                invokeAlgorithm(f);
+            }
+        }
     }
 }

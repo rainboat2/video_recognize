@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/invoke")
@@ -43,7 +40,8 @@ public class InvokeController {
         Integer uId = (Integer) session.getAttribute("userId");
         Map<String, Object> rs = new HashMap<>(5);
         if (invokeService.requestInvokePermission(uId, 1)){
-            invokeService.invokeAlgorithm(fileId);
+            File f = fileService.getFileByPrimaryKey(fileId);
+            invokeService.invokeAlgorithm(f);
             int flag = invokeService.insertRecord(uId, null);
             rs.put("status", flag);
         }else{
@@ -57,14 +55,24 @@ public class InvokeController {
     public Map<String, Object> recognizeAll(@RequestBody FileIdList fileIdList, HttpSession session) throws IOException {
         Integer uId = (Integer) session.getAttribute("userId");
         List<Integer> ids = fileIdList.getIdList();
-        Map<String, Object> rs = new HashMap<>(5);
+        Map<String, Object> rs = new HashMap<>(6);
         if (invokeService.requestInvokePermission(uId, ids.size())){
-            for (Integer fileId : ids){
-                invokeService.invokeAlgorithm(fileId);
-                invokeService.insertRecord(uId, null);
+            List<String> succeed = new ArrayList<>(ids.size() / 2);
+            List<String> failed = new ArrayList<>(ids.size() / 2);
+            // 逐个尝试调用算法
+            for (Integer id : ids){
+                File f = fileService.getFileByPrimaryKey(id);
+                if (invokeService.isRecognizing(f)){
+                    failed.add(f.getName());
+                }else{
+                    succeed.add(f.getName());
+                    invokeService.resetResultAndRecognizeTime(f);
+                    invokeService.invokeAlgorithm(f);
+                }
             }
             rs.put("status", 1);
-            rs.put("fileIds", ids);
+            rs.put("succeed", succeed);
+            rs.put("failed", failed);
         }else{
             rs.put("status", 0);
             rs.put("msg", "调用次数不足！");
@@ -87,7 +95,7 @@ public class InvokeController {
         }
 
         File f = fileService.saveVideo(new VideoInfo(info.getVideo(), null, -1, u.getId()));
-        invokeService.invokeAlgorithm(f.getId());
+        invokeService.invokeAlgorithm(f);
         invokeService.insertRecord(u.getId(), info.getToken());
         rs.put("videoId", f.getId());
         rs.put("msg", "成功调用！");

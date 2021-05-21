@@ -30,4 +30,10 @@ upload:
   image: /Users/rain/Movies/vedio_recognize/images
   files: /Users/rain/Movies/vedio_recognize/files
 python-path: /opt/anaconda3/bin/python
-script-path: /Users/rain/IdeaProjects/video_recognize/src/main/resources/static/Test.py
+script-path: /Users/rain/IdeaProjects/video_recognize/src/main/resources/static/video_recognize.py
+
+
+
+
+
+

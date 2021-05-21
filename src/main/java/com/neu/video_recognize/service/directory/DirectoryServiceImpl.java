@@ -121,12 +121,14 @@ public class DirectoryServiceImpl implements DirectoryService{
                 rs.put("msg", "文件不能移动到其自身或其子目录下");
                 return 0;
             }else{
+                renameIfSame(fileId, newParentId, true);
                 Directory d = new Directory();
                 d.setId(fileId);
                 d.setParentId(newParentId);
                 return directoryMapper.updateByPrimaryKeySelective(d);
             }
         }else{
+            renameIfSame(fileId, newParentId, false);
             File f = new File();
             f.setId(fileId);
             f.setParentId(newParentId);
@@ -143,8 +145,58 @@ public class DirectoryServiceImpl implements DirectoryService{
                 flag = true;
                 break;
             }
-            cur = fileMapper.selectByPrimaryKey(cur).getParentId();
+            cur = directoryMapper.selectByPrimaryKey(cur).getParentId();
         }
         return flag;
+    }
+
+    private void renameIfSame(Integer fileId, Integer newParentId, boolean isDirectory){
+        String newName;
+        Set<String> names;
+        if (isDirectory){
+            List<Directory> directories = directoryMapper.selectByParentId(newParentId);
+            // 提取所有文件夹的名字
+            names = new HashSet<>(directories.size() * 2);
+            for (Directory di : directories)
+                names.add(di.getName());
+            Directory d = directoryMapper.selectByPrimaryKey(fileId);
+            newName = renameIfSame(d.getName(), names, true);
+            // 如果名称被更改了，那么将其更新到数据库
+            if (!newName.equals(d.getName())){
+                Directory updateInfo = new Directory();
+                updateInfo.setId(d.getId());
+                updateInfo.setName(newName);
+                directoryMapper.updateByPrimaryKeySelective(updateInfo);
+            }
+        }else{
+            List<File> files = fileMapper.selectByParentId(newParentId);
+            names = new HashSet<>(files.size() * 2);
+            for (File fi : files)
+                names.add(fi.getName());
+            File f = fileMapper.selectByPrimaryKey(fileId);
+            newName = renameIfSame(f.getName(), names, false);
+            if (!newName.equals(f.getName())){
+                File update = new File();
+                update.setId(fileId);
+                update.setName(newName);
+                fileMapper.updateByPrimaryKeySelective(update);
+            }
+        }
+    }
+
+    private String renameIfSame(String name, Set<String> names, boolean isDirectory){
+        String prefix = name, suffix = "";
+        if (!isDirectory){
+            int dot = name.lastIndexOf('.');
+            prefix = name.substring(0, dot);
+            suffix = name.substring(dot);
+        }
+        int cnt = 1;
+        String newName = prefix + suffix;
+        while (names.contains(newName)){
+            newName = prefix + "(" + cnt + ")" + suffix;
+            cnt++;
+        }
+        return newName;
     }
 }

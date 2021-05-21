@@ -20,4 +20,6 @@ public interface DirectoryMapper {
     int updateByPrimaryKey(Directory record);
 
     List<Directory> selectByOwnerAndParent(Directory info);
+
+    List<Directory> selectByParentId(Integer parentId);
 }
