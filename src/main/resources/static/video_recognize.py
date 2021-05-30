@@ -7,4 +7,5 @@ video_path = sys.argv[1]
 
 results = videotag.classify(paths=[video_path], use_gpu=False)
 prediction = results[0]['prediction']
+
 print("rs:" + json.dumps(prediction))

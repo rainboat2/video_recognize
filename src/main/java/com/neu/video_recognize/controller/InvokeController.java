@@ -41,6 +41,7 @@ public class InvokeController {
         Map<String, Object> rs = new HashMap<>(5);
         if (invokeService.requestInvokePermission(uId, 1)){
             File f = fileService.getFileByPrimaryKey(fileId);
+            invokeService.resetResultAndRecognizeTime(f);
             invokeService.invokeAlgorithm(f);
             int flag = invokeService.insertRecord(uId, null);
             rs.put("status", flag);

@@ -1,8 +1,10 @@
 package com.neu.video_recognize.controller;
 
+import com.neu.video_recognize.entity.po.Directory;
 import com.neu.video_recognize.entity.po.File;
 import com.neu.video_recognize.entity.vo.FileIdList;
 import com.neu.video_recognize.entity.vo.VideoInfo;
+import com.neu.video_recognize.service.directory.DirectoryService;
 import com.neu.video_recognize.service.file.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +22,9 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private DirectoryService directoryService;
 
     @RequestMapping("/getById")
     public Map<String, Object> getById(@RequestParam("id") Integer id){
@@ -41,6 +46,9 @@ public class FileController {
         fi.setOwnerId(uId);
         // 存储视频
         File f = fileService.saveVideo(fi);
+        // 防止名字重复
+        String newName = directoryService.renameIfSame(f.getId(), f.getParentId(), false);
+        f.setName(newName);
         Map<String, Object> rs = new HashMap<>(5);
         rs.put("file", f);
         rs.put("status", 1);

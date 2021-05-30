@@ -64,7 +64,7 @@ public class DirectoryServiceImpl implements DirectoryService{
         // 获取文件夹
         Directory d = directoryMapper.selectByPrimaryKey(directoryId);
 
-        // 构建查询数据时用的数据
+        // 构建查询数据时用的对象
         Directory dInfo = new Directory();
         File fInfo = new File();
         dInfo.setOwnerId(userId);
@@ -78,13 +78,17 @@ public class DirectoryServiceImpl implements DirectoryService{
         directoryQueue.add(d);
         while (!directoryQueue.isEmpty()){
             Directory cur = directoryQueue.poll();
-            // 当前文件夹下的所有文件夹
+            // 当前文件夹下的所有文件夹和文件
             dInfo.setParentId(cur.getId());
-            directoryQueue.addAll(directoryMapper.selectByOwnerAndParent(dInfo));
-
-            // 当前文件夹下的所有文件
+            List<Directory> dirs = directoryMapper.selectByOwnerAndParent(dInfo);
             fInfo.setParentId(cur.getId());
-            files.addAll(fileMapper.selectByOwnerAndParent(fInfo));
+            List<File> fis = fileMapper.selectByOwnerAndParent(fInfo);
+
+            // 将文件夹加入到队列
+            directoryQueue.addAll(dirs);
+            // 待删除列表
+            directories.addAll(dirs);
+            files.addAll(fis);
         }
 
         // 依次删除找到的所有文件，并记录被删除文件的大小
@@ -150,7 +154,8 @@ public class DirectoryServiceImpl implements DirectoryService{
         return flag;
     }
 
-    private void renameIfSame(Integer fileId, Integer newParentId, boolean isDirectory){
+    @Override
+    public String renameIfSame(Integer fileId, Integer newParentId, boolean isDirectory){
         String newName;
         Set<String> names;
         if (isDirectory){
@@ -182,6 +187,7 @@ public class DirectoryServiceImpl implements DirectoryService{
                 fileMapper.updateByPrimaryKeySelective(update);
             }
         }
+        return newName;
     }
 
     private String renameIfSame(String name, Set<String> names, boolean isDirectory){

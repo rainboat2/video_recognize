@@ -1,8 +1,9 @@
 package com.neu.video_recognize.controller;
 
 import com.neu.video_recognize.entity.po.Directory;
-import com.neu.video_recognize.entity.po.User;
+import com.neu.video_recognize.entity.vo.DeleteFileListWrapper;
 import com.neu.video_recognize.service.directory.DirectoryService;
+import com.neu.video_recognize.service.file.FileService;
 import com.neu.video_recognize.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,9 @@ public class DirectoryController {
 
     @Autowired
     private DirectoryService directoryService;
+
+    @Autowired
+    private FileService fileService;
 
     @Autowired
     private UserService userService;
@@ -61,6 +65,17 @@ public class DirectoryController {
         Integer uId = (Integer) session.getAttribute("userId");
         int status = directoryService.deleteByPrimaryKey(directoryId, uId);
         return Collections.singletonMap("status", status);
+    }
+
+    @PostMapping("/deleteAll")
+    public Map<String, Object> deleteAll(@RequestBody DeleteFileListWrapper wrapper, HttpSession session){
+        Integer uId = (Integer) session.getAttribute("userId");
+        for (Integer fId : wrapper.getFileIds())
+            fileService.deleteByPrimaryKey(fId, uId);
+
+        for (Integer dId: wrapper.getDirectoryIds())
+            directoryService.deleteByPrimaryKey(dId, uId);
+        return Collections.singletonMap("status", 1);
     }
 
     @RequestMapping("/moveFile")
