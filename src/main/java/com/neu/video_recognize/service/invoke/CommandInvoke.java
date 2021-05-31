@@ -65,7 +65,6 @@ public class CommandInvoke implements InvokeService{
     public void invokeAlgorithm(File f) throws IOException {
         // 获取file对象，找到视频存储的绝对路径
         String absolutePath = videoPath + "/" + f.getFilePath();
-
         // 更新file对象的recognize_time，重置识别结果
        resetResultAndRecognizeTime(f);
 
@@ -101,8 +100,6 @@ public class CommandInvoke implements InvokeService{
     }
 
     public void resetResultAndRecognizeTime(File f){
-        if (f.getRecognizeResult() != null && f.getRecognizeResult().equals(""))
-            return;
         File updateInfo = new File();
         updateInfo.setId(f.getId());
         updateInfo.setRecognizeResult("");

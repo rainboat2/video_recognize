@@ -4,13 +4,11 @@ server:
     session:
       timeout: 86400
 spring:
-  profiles:
-    active: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/video_recognize?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT
-    username: qyz
-    password: 20175377
+    username: rainboat
+    password: rainboat
   mvc:
     static-path-pattern: /res/**
   web:
@@ -28,11 +26,11 @@ logging:
   level:
     root: info
 upload:
-  video: /Users/rain/Movies/vedio_recognize/videos
-  image: /Users/rain/Movies/vedio_recognize/images
-  files: /Users/rain/Movies/vedio_recognize/files
-python-path: /opt/anaconda3/bin/python
-script-path: /Users/rain/IdeaProjects/video_recognize/src/main/resources/static/video_recognize.py
+  video: /home/rainboat/video_recognize_res/videos
+  image: /home/rainboat/video_recognize_res/images
+  files: /home/rainboat/video_recognize_res/files
+python-path: /home/rainboat/anaconda3/bin/python
+script-path: /home/rainboat/video_recognize.py
 
 
 

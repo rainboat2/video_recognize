@@ -44,7 +44,7 @@ public class FileServiceImpl implements FileService{
         File file = new File(fi);
         file.setFilePath(videoFilePathName);
         file.setCoverImagePath(imageFilePathName);
-        file.setLastRecognizeTime(new Date(System.currentTimeMillis() - 86400000));
+        file.setLastRecognizeTime(new Date(86400000));
         file.setRecognizeResult("");
         fileMapper.insert(file);
 
