@@ -46,7 +46,6 @@ public class FileController {
         fi.setOwnerId(uId);
         // 存储视频
         File f = fileService.saveVideo(fi);
-        // 防止名字重复
         String newName = directoryService.renameIfSame(f.getId(), f.getParentId(), false);
         f.setName(newName);
         Map<String, Object> rs = new HashMap<>(5);

@@ -163,7 +163,8 @@ public class DirectoryServiceImpl implements DirectoryService{
             // 提取所有文件夹的名字
             names = new HashSet<>(directories.size() * 2);
             for (Directory di : directories)
-                names.add(di.getName());
+                if (!di.getId().equals(fileId))
+                    names.add(di.getName());
             Directory d = directoryMapper.selectByPrimaryKey(fileId);
             newName = renameIfSame(d.getName(), names, true);
             // 如果名称被更改了，那么将其更新到数据库
@@ -177,7 +178,8 @@ public class DirectoryServiceImpl implements DirectoryService{
             List<File> files = fileMapper.selectByParentId(newParentId);
             names = new HashSet<>(files.size() * 2);
             for (File fi : files)
-                names.add(fi.getName());
+                if (!fi.getId().equals(fileId))
+                    names.add(fi.getName());
             File f = fileMapper.selectByPrimaryKey(fileId);
             newName = renameIfSame(f.getName(), names, false);
             if (!newName.equals(f.getName())){
